@@ -13,8 +13,6 @@ public class ConversorApp {
     public static void main(String[] args) {
         List<Moneda> monedas = cargarMonedas();
         menu(monedas);
-
-        convertirMoneda();
     }
 
     private static void convertirMoneda(Moneda origen, Moneda destino, Double valor) {
@@ -91,9 +89,18 @@ public class ConversorApp {
                     case 16:
                     case 17:
                         int idxMonedaOrigen = opc - 1;
+                        Moneda origen = m.get(idxMonedaOrigen);
+
                         System.out.print("Seleccione la moneda destino ");
                         mostrarMonedas(m);
+
                         int idxMonedaDestino = s1.nextInt() - 1;
+                        Moneda destino = m.get(idxMonedaDestino);
+
+                        double valor;
+                        System.out.println("Seleccione el valor a convertir: ");
+                        valor = s1.nextDouble();
+                        convertirMoneda(origen, destino, valor);
             }
         } while (opc != 0);
     }
