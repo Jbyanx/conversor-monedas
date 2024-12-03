@@ -1,5 +1,6 @@
 import dto.ApiResponse;
 import entity.Moneda;
+import org.ietf.jgss.GSSContext;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,19 +17,23 @@ public class ConversorApp {
     }
 
     private static void convertirMoneda(Moneda origen, Moneda destino, Double valor) {
+        String apiKey = "8ebbb2549a65882dcd73b329";
         String o = origen.getCodigo();
         String d = destino.getCodigo();
 
         HttpClient cliente = HttpClient.newBuilder()
                 .build();
 
-        URI url = URI.create("https://v6.exchangerate-api.com/v6/YOUR-API-KEY/pair/"+o+"/"+d+"/"+valor+"");
+        URI url = URI.create("https://v6.exchangerate-api.com/v6/"+apiKey+"/pair/"+o+"/"+d+"/"+valor+"");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url.toString()))
                 .build();
 
         try{
             HttpResponse<String> response = cliente.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("**********************************************");
+            System.out.println("resultado de la conversion: "+response.body());
 
         } catch (Exception e){
             e.printStackTrace();
@@ -62,9 +67,9 @@ public class ConversorApp {
         int opc;
         do{
             System.out.println("Bienvenido al conversor de monedas");
-            System.out.println("seleccione la moneda a convertir");
             mostrarMonedas(m);
             System.out.println("0. Salir");
+            System.out.print("seleccione la moneda a convertir: ");
 
             opc = s1.nextInt();
 
@@ -91,14 +96,13 @@ public class ConversorApp {
                         int idxMonedaOrigen = opc - 1;
                         Moneda origen = m.get(idxMonedaOrigen);
 
-                        System.out.print("Seleccione la moneda destino ");
-                        mostrarMonedas(m);
+                        System.out.print("Seleccione la moneda destino: ");
 
                         int idxMonedaDestino = s1.nextInt() - 1;
                         Moneda destino = m.get(idxMonedaDestino);
 
                         double valor;
-                        System.out.println("Seleccione el valor a convertir: ");
+                        System.out.print("Seleccione el valor a convertir: ");
                         valor = s1.nextDouble();
                         convertirMoneda(origen, destino, valor);
             }
