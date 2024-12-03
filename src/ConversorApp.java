@@ -1,6 +1,6 @@
+import com.google.gson.Gson;
 import dto.ApiResponse;
 import entity.Moneda;
-import org.ietf.jgss.GSSContext;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,7 +24,7 @@ public class ConversorApp {
         HttpClient cliente = HttpClient.newBuilder()
                 .build();
 
-        URI url = URI.create("https://v6.exchangerate-api.com/v6/"+apiKey+"/pair/"+o+"/"+d+"/"+valor+"");
+        URI url = URI.create("https://v6.exchangerate-api.com/v6/"+apiKey+"/pair/"+o+"/"+d+"/"+valor);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url.toString()))
                 .build();
@@ -33,8 +33,17 @@ public class ConversorApp {
             HttpResponse<String> response = cliente.send(request, HttpResponse.BodyHandlers.ofString());
 
             System.out.println("**********************************************");
-            System.out.println("resultado de la conversion: "+response.body());
 
+            Gson gson = new Gson();
+            if(response.statusCode() == 200) {
+                ApiResponse apiResponse = gson.fromJson(response.body(), ApiResponse.class);
+
+                System.out.println(valor + " " + o + " -> " + d + ": " + apiResponse.conversion_result());
+                System.out.println("trm de hoy: " + apiResponse.conversion_rate());
+            }else{
+                System.out.println("hubo un error en la peticion");
+                System.out.println(response.body());
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -72,6 +81,10 @@ public class ConversorApp {
             System.out.print("seleccione la moneda a convertir: ");
 
             opc = s1.nextInt();
+            if(opc < 0 || opc > m.size() ){
+                System.out.println("opcion onvalida, intente nuevamente");
+                menu(m);
+            }
 
             switch(opc){
                 case 0:
@@ -105,6 +118,7 @@ public class ConversorApp {
                         System.out.print("Seleccione el valor a convertir: ");
                         valor = s1.nextDouble();
                         convertirMoneda(origen, destino, valor);
+                        break;
             }
         } while (opc != 0);
     }
