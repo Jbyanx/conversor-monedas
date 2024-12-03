@@ -17,7 +17,7 @@ public class ConversorApp {
     }
 
     private static void convertirMoneda(Moneda origen, Moneda destino, Double valor) {
-        String apiKey = "8ebbb2549a65882dcd73b329";
+        String apiKey = System.getenv("API_KEY");
         String o = origen.getCodigo();
         String d = destino.getCodigo();
 
